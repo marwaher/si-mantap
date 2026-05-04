@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Si-MANTAP Training</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.step { display: none; }
+.active { display: block; }
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background: #2c7be5;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1a5edb;
+}
+
+textarea, input {
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  padding: 8px;
+}
+
+.progress {
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  height: 10px;
+  background: #2c7be5;
+  width: 0%;
+  border-radius: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card">
+
+    <h2>Si-MANTAP Training</h2>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <form id="formPelatihan">
+
+      <!-- STEP 1 -->
+      <div class="step active">
+        <h3>Identitas Peserta</h3>
+        <input type="text" name="nama" placeholder="Nama">
+        <input type="text" name="nim" placeholder="NIM">
+        <input type="text" name="judul" placeholder="Judul Penelitian">
+        <button type="button" onclick="nextStep()">Lanjut</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step">
+        <h3>Sesi 1: Dekonstruksi Gagasan</h3>
+
+        <label>Masalah utama penelitian</label>
+        <textarea name="masalah"></textarea>
+
+        <label>Metode penelitian</label>
+        <textarea name="metode"></textarea>
+
+        <label>Kesimpulan utama</label>
+        <textarea name="kesimpulan"></textarea>
+
+        <button type="button" onclick="nextStep()">Lanjut</button>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step">
+        <h3>Sesi 2: Reduksi Data</h3>
+
+        <label>Data 1</label>
+        <input type="text" name="data1">
+
+        <label>Ringkasan</label>
+        <textarea name="ringkasan1"></textarea>
+
+        <button type="button" onclick="nextStep()">Lanjut</button>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step">
+        <h3>Sesi 3: Parafrase</h3>
+
+        <p><b>Teks:</b> "Pembuatan kebijakan publik yang inklusif..."</p>
+        <textarea name="parafrase"></textarea>
+
+        <button type="button" onclick="nextStep()">Lanjut</button>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step">
+        <h3>Sesi 4: Mad Libs</h3>
+
+        <textarea name="madlibs" placeholder="Tulis paragraf Anda..."></textarea>
+
+        <button type="submit">Selesai</button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<script>
+let currentStep = 0;
+let steps = document.querySelectorAll(".step");
+let progressBar = document.getElementById("progressBar");
+
+function showStep(n) {
+  steps.forEach(step => step.classList.remove("active"));
+  steps[n].classList.add("active");
+  progressBar.style.width = ((n+1)/steps.length)*100 + "%";
+}
+
+function nextStep() {
+  saveData();
+  if (currentStep < steps.length - 1) {
+    currentStep++;
+    showStep(currentStep);
+  }
+}
+
+function saveData() {
+  let form = document.getElementById("formPelatihan");
+  let data = new FormData(form);
+  let obj = {};
+  data.forEach((value, key) => obj[key] = value);
+  localStorage.setItem("simantap", JSON.stringify(obj));
+}
+
+function loadData() {
+  let data = localStorage.getItem("simantap");
+  if (data) {
+    let obj = JSON.parse(data);
+    Object.keys(obj).forEach(key => {
+      let el = document.querySelector(`[name="${key}"]`);
+      if (el) el.value = obj[key];
+    });
+  }
+}
+
+document.getElementById("formPelatihan").addEventListener("submit", function(e){
+  e.preventDefault();
+  saveData();
+  alert("Jawaban berhasil disimpan!");
+});
+
+loadData();
+showStep(currentStep);
+</script>
+
+</body>
+</html>
